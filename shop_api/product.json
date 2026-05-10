@@ -1,0 +1,109 @@
+[
+    {
+        "product_id": "145568",
+        "name": "Умные часы XYZ Pro Z",
+        "description": "Умные часы с функцией мониторинга здоровья, GPS и уведомлениями",
+        "price": {
+            "amount": 49599.99,
+            "currency": "RUB"
+        },
+        "category": "Электроника",
+        "brand": "XYZ",
+        "stock": {
+            "available": 180,
+            "reserved": 50
+        },
+        "sku": "XYZ-12345",
+        "tags": ["умные часы", "гаджеты", "технологии"],
+        "images": [
+            {
+            "url": "https://example.com/images/product1.jpg",
+            "alt": "Смартфон ABC 5G Z - вид спереди"
+            },
+            {
+            "url": "https://example.com/images/product1_side.jpg",
+            "alt": "Смартфон ABC 5G Z - вид сбоку"
+            }],
+        "specifications": {
+            "weight": "50g",
+            "battery_life": "24 hours",
+            "water_resistance": "IP68"
+        },
+        "created_at": "2025-01-01T10:00:00Z",
+        "updated_at": "2025-02-10T15:30:00Z",
+        "index": "products",
+        "store_id": "store_001"
+    },
+    {
+        "product_id": "14568",
+        "name": "Смартфон ABC 5G",
+        "description": "Флагманский смартфон с 5G поддержкой",
+        "price": {
+            "amount": 59999.99,
+            "currency": "RUB"
+        },
+        "category": "Электроника",
+        "brand": "ABC",
+        "stock": {
+            "available": 45,
+            "reserved": 10
+        },
+        "sku": "ABC-67890",
+        "tags": ["смартфон", "5G", "флагман"],
+        "images": [
+            {
+            "url": "https://example.com/images/product2.jpg",
+            "alt": "Смартфон ABC 5G - вид спереди"
+            },
+            {
+            "url": "https://example.com/images/product2_side.jpg",
+            "alt": "Смартфон ABC 5G - вид сбоку"
+            }],
+        "specifications": {
+            "weight": "180g",
+            "screen": "6.7 inches",
+            "battery_life": "48 hours"
+        },
+        "created_at": "2025-01-01T10:05:00Z",
+        "updated_at": "2025-03-10T15:30:00Z",
+        "index": "products",
+        "store_id": "store_001"
+    },
+    {
+        "product_id": "12345",
+        "name": "Умные часы XYZ",
+        "description": "Умные часы с функцией мониторинга здоровья, GPS и уведомлениями.",
+        "price": {
+            "amount": 4999.99,
+            "currency": "RUB"
+        },
+        "category": "Электроника",
+        "brand": "XYZ",
+        "stock": {
+            "available": 150,
+            "reserved": 20
+        },
+        "sku": "XYZ-12345",
+        "tags": ["умные часы", "гаджеты", "технологии"],
+        "images": [
+            {
+            "url": "https://example.com/images/product3.jpg",
+            "alt": "Умные часы XYZ - вид спереди"
+            },
+            {
+            "url": "https://example.com/images/produc3_side.jpg",
+            "alt": "Умные часы XYZ - вид сбоку"
+            }
+        ],
+        "specifications": {
+            "weight": "50g",
+            "dimensions": "42mm x 36mm x 10mm",
+            "battery_life": "24 hours",
+            "water_resistance": "IP68"
+        },
+        "created_at": "2023-10-01T12:00:00Z",
+        "updated_at": "2023-10-10T15:30:00Z",
+        "index": "products",
+        "store_id": "store_001"
+        }
+]

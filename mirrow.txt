@@ -1,0 +1,35 @@
+bash
+# 1. Запускаем все сервисы
+docker-compose up -d
+
+# 2. Создаем топик для репликации (на source)
+docker exec -it kafka-src kafka-topics --create \
+  --topic shop_products \
+  --bootstrap-server localhost:9092 \
+  --partitions 3 \
+  --replication-factor 1
+
+# 3. Создаем коннектор MirrorMaker через REST API
+curl -X POST http://localhost:8083/connectors \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "mm2-source-to-target",
+    "config": {
+      "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
+      "source.cluster.alias": "source",
+      "target.cluster.alias": "target",
+      "source.cluster.bootstrap.servers": "kafka-1:29092",
+      "target.cluster.bootstrap.servers": "kafka-4:28082",
+      "topics": "shop_products,client_events",
+      "replication.factor": "1",
+      "sync.topic.acls.enabled": "false",
+      "emit.heartbeats.enabled": "true",
+      "emit.checkpoints.enabled": "true"
+    }
+  }'
+
+# 4. Проверяем, что коннектор создался
+curl http://localhost:8083/connectors/mm2-source-to-target/status
+
+# 5. Результат: в target кластере появится топик source.shop_products
+docker exec -it kafka-dest kafka-topics --list --bootstrap-server localhost:29093

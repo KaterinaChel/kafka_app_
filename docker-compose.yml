@@ -1,0 +1,379 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka-1:
+    image: confluentinc/cp-kafka:7.0.1
+    restart: always
+    container_name: kafka-1
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    volumes:
+      - ./secrets/kafka-1-creds:/etc/kafka/secrets
+    environment:
+      KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
+      KAFKA_SSL_PROTOCOL: TLSv1.2
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:SSL
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-1:9092,EXTERNAL://kafka-1:29092
+      KAFKA_SSL_CLIENT_AUTH: required
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SSL_PRINCIPAL_MAPPING_RULES: "RULE:^CN=([^,]*).*$/$1/,DEFAULT"
+      KAFKA_SUPER_USERS: User:kafka-1;User:kafka-2;User:kafka-3
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-1.keystore.pkcs12
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-1.truststore.jks
+      KAFKA_SSL_KEYSTORE_TYPE: PKCS12
+      KAFKA_SSL_TRUSTSTORE_TYPE: JKS
+      KAFKA_SSL_KEYSTORE_PASSWORD: 'yandexqw23%%'
+      KAFKA_SSL_KEY_PASSWORD: 'yandexqw23%%'
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: 'yandexqw23%%'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+
+
+  kafka-2:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka-2
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9092"
+      - "29093:29093"
+    volumes:
+      - ./secrets/kafka-2-creds:/etc/kafka/secrets
+    environment:
+      KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
+      KAFKA_SSL_PROTOCOL: TLSv1.2
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:SSL
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:9092,EXTERNAL://kafka-2:29093
+      KAFKA_SSL_KEYSTORE_TYPE: PKCS12
+      KAFKA_SSL_TRUSTSTORE_TYPE: JKS
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_SSL_CLIENT_AUTH: required
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SSL_PRINCIPAL_MAPPING_RULES: "RULE:^CN=([^,]*).*$/$1/,DEFAULT"
+      KAFKA_SUPER_USERS: User:kafka-1;User:kafka-2;User:kafka-3
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-2.keystore.pkcs12
+      KAFKA_SSL_KEYSTORE_PASSWORD: 'yandexqw59%%'
+      KAFKA_SSL_KEY_PASSWORD: 'yandexqw59%%'
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: 'yandexqw59%%'
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-2.truststore.jks
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+
+  kafka-3:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka-3
+    depends_on:
+      - zookeeper
+    ports:
+      - "9094:9092"
+      - "29094:29094"
+    volumes:
+      - ./secrets/kafka-3-creds:/etc/kafka/secrets
+    environment:
+      KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
+      KAFKA_SSL_PROTOCOL: TLSv1.2
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:SSL
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-3:9092,EXTERNAL://kafka-3:29094
+      KAFKA_SSL_CLIENT_AUTH: required
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_SSL_KEYSTORE_TYPE: PKCS12
+      KAFKA_SSL_TRUSTSTORE_TYPE: JKS
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SSL_PRINCIPAL_MAPPING_RULES: "RULE:^CN=([^,]*).*$/$1/,DEFAULT"
+      KAFKA_SUPER_USERS: User:kafka-1;User:kafka-2;User:kafka-3
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-3.keystore.pkcs12
+      KAFKA_SSL_KEYSTORE_PASSWORD: 'yandexqw78%%'
+      KAFKA_SSL_KEY_PASSWORD: 'yandexqw78%%'
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: 'yandexqw78%%'
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-3.truststore.jks
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.6.0
+    ports:
+      - '8081:8081'
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    environment:
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKA_BROKERS: PLAINTEXT://kafka-1:9092,PLAINTEXT://kafka-2:9092,PLAINTEXT://kafka-3:9092
+    networks:
+      - proxynet
+
+
+
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus:/etc/prometheus
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
+    networks:
+      - proxynet
+
+  grafana:
+    build:
+      context: ./grafana
+    ports:
+      - 3000:3000
+    networks:
+      - proxynet
+
+ 
+  shop-producer:
+    build: ./shop_api
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    volumes:
+      - ./shop_api:/app
+      - ./data:/app/data
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-1:29092,kafka-2:29093,kafka-3:29094
+    restart: on-failure
+
+  client-producer:
+    build: ./client_api
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    volumes:
+      - ./client_api:/app
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-1:29092,kafka-2:29093,kafka-3:29094
+    restart: on-failure
+
+  stream-processor:
+    build: ./stream_processor
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    volumes:
+      - ./stream_processor:/app
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-1:29092,kafka-2:29093,kafka-3:29094
+    restart: on-failure
+
+  zookeeper-2:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper-2
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2182
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2182:2182"
+
+  kafka-4:
+    image: confluentinc/cp-kafka:7.0.1
+    restart: always
+    container_name: kafka-4
+    depends_on:
+      - zookeeper-2
+    ports:
+      - "8082:8082"
+      - "28082:28082"
+    volumes:
+      - ./secrets/kafka-4-creds:/etc/kafka/secrets
+    environment:
+      KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
+      KAFKA_SSL_PROTOCOL: TLSv1.2
+      KAFKA_BROKER_ID: 4
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-2:2182
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:SSL
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:8082,EXTERNAL://0.0.0.0:28082
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-4:9092,EXTERNAL://kafka-4:28082
+      KAFKA_SSL_CLIENT_AUTH: required
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SSL_PRINCIPAL_MAPPING_RULES: "RULE:^CN=([^,]*).*$/$1/,DEFAULT"
+      KAFKA_SUPER_USERS: User:kafka-4;User:kafka-5;User:kafka-6
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-4.keystore.pkcs12
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-4.truststore.jks
+      KAFKA_SSL_KEYSTORE_TYPE: PKCS12
+      KAFKA_SSL_TRUSTSTORE_TYPE: JKS
+      KAFKA_SSL_KEYSTORE_PASSWORD: 'yandexqw23%%'
+      KAFKA_SSL_KEY_PASSWORD: 'yandexqw23%%'
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: 'yandexqw23%%'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+
+
+  kafka-5:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka-5
+    depends_on:
+      - zookeeper-2
+    ports:
+      - "9095:9092"
+      - "28083:28083"
+    volumes:
+      - ./secrets/kafka-5-creds:/etc/kafka/secrets
+    environment:
+      KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
+      KAFKA_SSL_PROTOCOL: TLSv1.2
+      KAFKA_BROKER_ID: 5
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-2:2182
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:SSL
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:28083
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-5:9092,EXTERNAL://kafka-5:28083
+      KAFKA_SSL_KEYSTORE_TYPE: PKCS12
+      KAFKA_SSL_TRUSTSTORE_TYPE: JKS
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_SSL_CLIENT_AUTH: required
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SSL_PRINCIPAL_MAPPING_RULES: "RULE:^CN=([^,]*).*$/$1/,DEFAULT"
+      KAFKA_SUPER_USERS: User:kafka-4;User:kafka-5;User:kafka-6
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-5.keystore.pkcs12
+      KAFKA_SSL_KEYSTORE_PASSWORD: 'yandexqw59%%'
+      KAFKA_SSL_KEY_PASSWORD: 'yandexqw59%%'
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: 'yandexqw59%%'
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-5.truststore.jks
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+
+  kafka-6:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka-6
+    depends_on:
+      - zookeeper-2
+    ports:
+      - "9096:9092"
+      - "28084:28084"
+    volumes:
+      - ./secrets/kafka-6-creds:/etc/kafka/secrets
+    environment:
+      KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
+      KAFKA_SSL_PROTOCOL: TLSv1.2
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:SSL
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:28084
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-6:9092,EXTERNAL://kafka-6:28084
+      KAFKA_SSL_CLIENT_AUTH: required
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_SSL_KEYSTORE_TYPE: PKCS12
+      KAFKA_SSL_TRUSTSTORE_TYPE: JKS
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_BROKER_ID: 6
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-2:2182
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SSL_PRINCIPAL_MAPPING_RULES: "RULE:^CN=([^,]*).*$/$1/,DEFAULT"
+      KAFKA_SUPER_USERS: User:kafka-4;User:kafka-5;User:kafka-6
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-6.keystore.pkcs12
+      KAFKA_SSL_KEYSTORE_PASSWORD: 'yandexqw78%%'
+      KAFKA_SSL_KEY_PASSWORD: 'yandexqw78%%'
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: 'yandexqw78%%'
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.kafka-6.truststore.jks
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+
+  spark_etl_job:
+    build: ./spark_etl_job
+    depends_on:
+      - kafka-4
+      - kafka-5
+      - kafka-6
+    volumes:
+      - ./spark_etl_job:/app
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-4:9092,kafka-5:9092,kafka-6:9092
+    restart: on-failure
+
+  schema-registry-2:
+    image: confluentinc/cp-schema-registry:7.6.0
+    ports:
+      - '8085:8081'
+    depends_on:
+      - kafka-4
+      - kafka-5
+      - kafka-6
+    environment:
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKA_BROKERS: PLAINTEXT://kafka-4:9092,PLAINTEXT://kafka-5:9092,PLAINTEXT://kafka-6:9092
+    networks:
+      - proxynet
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+      - kafka-4
+      - kafka-5
+      - kafka-6
+    ports:
+      - "8087:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092,kafka-4:9092,kafka-5:9092,kafka-6:9092
+
+
+
+
+
+
+
+  # ========== SPARK (с HDFS support) ==========
+  spark-master:
+    image: bitnamilegacy/spark:3.5.4
+    container_name: spark-master
+    ports:
+     - "7077:7077"  # Порт для подключения Executors
+     - "7070:8080"  # HTTP-порт для Web UI Apache Spark master
+    environment:
+     SPARK_MODE: master
+
+
+  spark-worker:
+    image: bitnamilegacy/spark:3.5.4
+    container_name: spark-worker
+    depends_on:
+     - spark-master
+    ports:
+     - "7071:8081"  # HTTP-порт для Web UI Apache Spark worker
+    environment:
+     SPARK_MODE: worker
+     SPARK_MASTER_URL: spark://spark-master:7077
+
+networks:
+  proxynet:
+    driver: bridge
