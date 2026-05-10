@@ -174,12 +174,64 @@ kafka-topics --create --topic shop_products \
 kafka-topics --create --topic client_events \
   --bootstrap-server localhost:9092 --partitions 10 --replication-factor 3
 
+
 # Настройка ACL
+
+Выдаем права kafka-1 на создание топиков docker exec -it kafka-1 kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:kafka-1 --operation Create --cluster
+Выдаем права kafka-4 на создание топиков docker exec -it kafka-1 kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:kafka-1 --operation Create --cluster
+
 kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
-  --add --allow-principal User:shop-app --operation Write --topic shop_products
- Запуск Python-компонентов
-Способ A: Через Docker (рекомендуемый)
-bash
+  --add --allow-principal User:shop-producer --operation Write --topic shop_products
+  kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
+  --add --allow-principal User:shop-producer --operation Describe --topic shop_products
+  
+kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
+  --add --allow-principal User:client-producer --operation Write --topic client_events
+kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
+  --add --allow-principal User:client-producer --operation Describe --topic client_events
+  
+kafka-acls --authorizer-properties zookeeper.connect=zookeeper-2:2182 \
+  --add --allow-principal User:spark_etl_job --operation Read --topic shop_products
+  
+kafka-acls --authorizer-properties zookeeper.connect=zookeeper-2:2182 \
+  --add --allow-principal User:spark_etl_job --operation Read --topic shop_products
+  
+kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
+  --add --allow-principal User:kafka-connect --operation Read --topic shop_products
+  
+kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
+  --add --allow-principal User:kafka-connect --operation Write --topic product_filter_app
+  
+kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
+  --add --allow-principal User:kafka-connect --operation Describe --topic product_filter_app
+  
+docker exec -it kafka-1 kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
+  --add --allow-principal User:mirror-maker \
+  --operation Read --operation Describe --operation DescribeConfigs \
+  --topic shop_products --topic client_events
+
+
+docker exec -it kafka-1 kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 \
+  --add --allow-principal User:mirror-maker \
+  --operation Read --operation Describe \
+  --group mirror-group
+
+docker exec -it kafka-4 kafka-acls --authorizer-properties zookeeper.connect=zookeeper-2:2182 \
+  --add --allow-principal User:mirror-maker \
+  --operation Create --operation Write --operation Describe --operation Alter \
+  --topic source.shop_products --topic source.client_events
+
+
+docker exec -it kafka-4 kafka-acls --authorizer-properties zookeeper.connect=zookeeper-2:2182 \
+  --add --allow-principal User:mirror-maker \
+  --operation Create --operation Write \
+  --topic source.*
+
+
+docker exec -it kafka-4 kafka-acls --authorizer-properties zookeeper.connect=zookeeper-2:2182 \
+  --add --allow-principal User:mirror-maker \
+  --operation Write --operation Create --operation Describe \
+  --topic mm2-offset-syncs --topic mm2-configs --topic heartbeat-*
 # Все Python-сервисы уже запущены в Docker
 
 Проверка работы
